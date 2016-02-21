@@ -2,6 +2,7 @@ import Dict
 import Effects exposing (..)
 import Html exposing (..)
 import Html.Attributes exposing (..)
+import Html.Events exposing (..)
 import StartApp
 import Task exposing (Task)
 
@@ -14,9 +15,10 @@ import StartApp
 
 import ElmFire
 import ElmFire.Dict
+import ElmFire.Op
 
 
-type Action = Noop | FromServer (Dict.Dict String Model)
+type Action = Noop | FromServer (Dict.Dict String Model) | Toggle Int
 
 
 type Status = Open | Closed
@@ -63,6 +65,14 @@ syncConfig =
   }
 
 
+effectModel : ElmFire.Op.Operation Model -> Effects Action
+effectModel operation =
+  ElmFire.Op.operate
+    syncConfig
+    operation
+  |> kickOff
+
+
 -- Map any task to an effect, discarding any direct result or error value
 kickOff : Task x a -> Effects Action
 kickOff =
@@ -94,12 +104,30 @@ update action model =
     FromServer dict ->
       ( Maybe.withDefault [] (Dict.get "sections" dict), Effects.none )
 
+    Toggle toggleIndex ->
+      let
+        toggleStatus status =
+          case status of
+            Open -> Closed
+            Closed -> Open
+
+        toggleOnIndex index status =
+          if index == toggleIndex
+            then toggleStatus status
+            else status
+
+        updatedModel =
+          List.indexedMap toggleOnIndex model
+
+      in
+        ( updatedModel, effectModel <| ElmFire.Op.insert "sections" updatedModel )
+
 --------------------------------------------------------------------------------
 
 view : Signal.Address Action -> Model -> Html
 view address model =
   let
-    sectionView status =
+    sectionView index status =
       let
         color =
           case status of
@@ -108,11 +136,13 @@ view address model =
 
       in
         div
-          [ style [( "background-color", color )] ]
+          [ style [( "background-color", color )]
+          , onDoubleClick address (Toggle index)
+          ]
           [ text "Section" ]
 
   in
-    div [] (List.map sectionView model)
+    div [] (List.indexedMap sectionView model)
 
 --------------------------------------------------------------------------------
 
