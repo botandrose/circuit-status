@@ -59,10 +59,9 @@ syncConfig =
   { location = ElmFire.fromUrl firebaseUrl
   , orderOptions = ElmFire.noOrder
   , encoder =
-    \model ->
-      JE.object [ ("sections", JE.list (List.map (\status -> JE.bool (statusToBool status)) model)) ]
+    \model -> JE.list (List.map (\status -> JE.bool (statusToBool status)) model)
   , decoder =
-    ( "sections" := (JD.list (JD.bool `JD.andThen` (\bool -> JD.succeed (boolToStatus bool)))) )
+    JD.list (JD.bool `JD.andThen` (\bool -> JD.succeed (boolToStatus bool)))
   }
 
 --------------------------------------------------------------------------------
