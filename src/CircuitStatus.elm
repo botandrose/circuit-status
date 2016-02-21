@@ -16,55 +16,65 @@ import ElmFire
 import ElmFire.Dict
 
 
-type Status = Open | Closed
-
-
-statusToBool : Status -> Bool
-statusToBool status =
-  case status of
-    Open -> True
-    Closed -> False
-
-
-boolToStatus : Bool -> Status
-boolToStatus bool =
-  case bool of
-    True -> Open
-    False -> Closed
-
-
 type Action = Noop | FromServer (Dict.Dict String Model)
 
+
+type Status = Open | Closed
 
 
 type alias Model = List Status
 
+--------------------------------------------------------------------------------
 
 firebaseUrl : String
 firebaseUrl = "https://shining-inferno-6056.firebaseio.com"
 
 
--- Mirror Firebase's content as the model's items
+modelEncoder : List Status -> JE.Value
+modelEncoder model =
+  let
+    statusToBool status =
+      case status of
+        Open -> True
+        Closed -> False
 
--- initialTask : Task Error (Task Error ())
--- inputItems : Signal ???
-(initialTask, inputItems) =
-  ElmFire.Dict.mirror syncConfig
+  in
+    JE.list (List.map (\status -> JE.bool (statusToBool status)) model)
 
 
---------------------------------------------------------------------------------
+modelDecoder : JD.Decoder (List Status)
+modelDecoder =
+  let
+    boolToStatus bool =
+      case bool of
+        True -> Open
+        False -> Closed
+
+  in
+    JD.list (JD.bool `JD.andThen` (\bool -> JD.succeed (boolToStatus bool)))
+
 
 syncConfig : ElmFire.Dict.Config Model
 syncConfig =
   { location = ElmFire.fromUrl firebaseUrl
   , orderOptions = ElmFire.noOrder
-  , encoder =
-    \model -> JE.list (List.map (\status -> JE.bool (statusToBool status)) model)
-  , decoder =
-    JD.list (JD.bool `JD.andThen` (\bool -> JD.succeed (boolToStatus bool)))
+  , encoder = modelEncoder
+  , decoder = modelDecoder
   }
 
---------------------------------------------------------------------------------
+
+-- Map any task to an effect, discarding any direct result or error value
+kickOff : Task x a -> Effects Action
+kickOff =
+  Task.toMaybe >> Task.map (always (Noop)) >> Effects.task
+
+
+-- Mirror Firebase's content as the model's items
+-- initialTask : Task Error (Task Error ())
+-- inputItems : Signal ???
+(initialTask, inputItems) =
+  ElmFire.Dict.mirror syncConfig
+
 
 initialModel : Model
 initialModel = []
@@ -75,12 +85,6 @@ initialEffect = initialTask |> kickOff
 
 --------------------------------------------------------------------------------
 
--- Map any task to an effect, discarding any direct result or error value
-kickOff : Task x a -> Effects Action
-kickOff =
-  Task.toMaybe >> Task.map (always (Noop)) >> Effects.task
-
-
 update : Action -> Model -> ( Model, Effects Action )
 update action model =
   case action of
@@ -90,6 +94,7 @@ update action model =
     FromServer dict ->
       ( Maybe.withDefault [] (Dict.get "sections" dict), Effects.none )
 
+--------------------------------------------------------------------------------
 
 view : Signal.Address Action -> Model -> Html
 view address model =
@@ -109,6 +114,7 @@ view address model =
   in
     div [] (List.map sectionView model)
 
+--------------------------------------------------------------------------------
 
 config : StartApp.Config Model Action
 config =
