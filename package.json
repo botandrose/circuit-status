@@ -1,0 +1,7 @@
+{
+  "name": "elm",
+  "version": "0.0.1",
+  "dependencies": {
+    "elm": "^0.16.0"
+  }
+}
