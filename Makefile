@@ -1,5 +1,5 @@
 default:
-	elm make --yes --output public/index.html Main.elm 
+	elm make --yes --output public/index.html src/CircuitStatus.elm
 
 deploy:
 	firebase deploy
