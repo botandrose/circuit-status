@@ -1,6 +1,8 @@
+import Effects exposing (..)
 import Html exposing (..)
 import Html.Attributes exposing (..)
-import StartApp.Simple as StartApp
+import StartApp
+import Task exposing (Task)
 
 
 type Status = Open | Closed
@@ -9,9 +11,19 @@ type Status = Open | Closed
 type Action = Noop
 
 
-model = [ Open, Closed, Open, Closed ]
+type alias Model = List Status
 
 
+initialModel : Model
+initialModel = [ Open, Closed, Open, Closed ]
+
+
+update : Action -> Model -> ( Model, Effects Action )
+update action model =
+  ( model, Effects.none )
+
+
+view : Signal.Address Action -> Model -> Html
 view address model =
   let
     sectionView status =
@@ -30,10 +42,23 @@ view address model =
     div [] (List.map sectionView model)
 
 
-update action model =
-  model
+config : StartApp.Config Model Action
+config =
+  { init = (initialModel, Effects.none)
+  , update = update
+  , view = view
+  , inputs = [ Signal.constant Noop ]
+  }
 
 
-main =
-  StartApp.start { model = model, view = view, update = update }
+app : StartApp.App Model
+app = StartApp.start config
+
+
+port runEffects : Signal (Task Never ())
+port runEffects = app.tasks
+
+
+main : Signal Html
+main = app.html
 
