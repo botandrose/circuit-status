@@ -1,4 +1,4 @@
-module Update where
+module Update (update) where
 
 import Dict
 import Effects exposing (Effects, Never)

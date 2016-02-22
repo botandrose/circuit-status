@@ -1,4 +1,4 @@
-module Persistence where
+module Persistence (initialEffect, inputItems, saveModel) where
 
 import Effects exposing (Effects, Never)
 import ElmFire

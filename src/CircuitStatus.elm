@@ -1,12 +1,12 @@
 import Effects exposing (Never)
-import Html exposing (..)
+import Html exposing (Html)
 import Model exposing (..)
-import Persistence exposing (..)
+import Persistence exposing (initialEffect, inputItems)
 import Signal exposing (Mailbox, Address, mailbox, message)
 import StartApp
 import Task exposing (Task)
-import Update exposing (..)
-import View exposing (..)
+import Update exposing (update)
+import View exposing (view)
 
 
 config : StartApp.Config Model Action
@@ -26,6 +26,6 @@ port runEffects : Signal (Task Never ())
 port runEffects = app.tasks
 
 
-main : Signal Html
+main : Signal Html.Html
 main = app.html
 
