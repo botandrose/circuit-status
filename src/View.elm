@@ -35,35 +35,20 @@ statusToColor status =
     Closed -> "red"
 
 
+sectionPoints : SectionId -> String
+sectionPoints sectionId =
+  case sectionId of
+    CaveLeft -> "527.719,389.179 546.967,389.179 546.967,394.757 663.468,413.634 683.726,433.433 683.726,493.0 593.567,501.628 533.797,453.508"
+    CaveRight -> "683.726,493.0 683.726,554.285 633.076,553.8 608.256,535.565 593.567,501.628"
+
+
 sectionView : Signal.Address Action -> Section -> Svg
 sectionView address section =
-  case section of
-    (CaveLeft, status) -> caveLeft address section
-    (CaveRight, status) -> caveRight address section
-
-
-caveLeft : Signal.Address Action -> Section -> Svg
-caveLeft address section =
   polygon
     [ onClick address (Toggle section)
     , fill (statusToColor (snd section))
     , stroke "none"
-    , points "
-        527.719,389.179 546.967,389.179 546.967,394.757 663.468,413.634 683.726,433.433 683.726,493.0 593.567,501.628 533.797,453.508
-      "
-    ]
-    []
-
-
-caveRight : Signal.Address Action -> Section -> Svg
-caveRight address section =
-  polygon
-    [ onClick address (Toggle section)
-    , fill (statusToColor (snd section))
-    , stroke "none"
-    , points "
-        683.726,493.0 683.726,554.285 633.076,553.8 608.256,535.565 593.567,501.628
-      "
+    , points (sectionPoints (fst section))
     ]
     []
 
