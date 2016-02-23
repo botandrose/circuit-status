@@ -19,6 +19,13 @@ stringToSectionId string =
   case string of
     "CaveLeft" -> CaveLeft
     "CaveRight" -> CaveRight
+    "BoneBreaker" -> BoneBreaker
+    "AlleyCave" -> AlleyCave
+    "AlleyNorthwest" -> AlleyNorthwest
+    "AlleyNortheast" -> AlleyNortheast
+    "Entrance" -> Entrance
+    "Overhang" -> Overhang
+    "Staircase" -> Staircase
     _ -> Debug.log ("unmatched sectionId string: \"" ++ string ++ "\", defaulting to") CaveLeft
 
 
