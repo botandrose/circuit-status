@@ -15,23 +15,18 @@ update action model =
     FromServer dict ->
       ( Maybe.withDefault initialModel (Dict.get "sections" dict), Effects.none )
 
-    Toggle section ->
+    Toggle sectionId ->
       let
         toggleStatus status =
           case status of
             Open -> Closed
             Closed -> Open
 
-        toggleSelectedSectionStatus selectedSection section =
-          let
-            sectionId = (fst selectedSection)
-          in
-            if sectionId == (fst section)
-            then ( sectionId, toggleStatus (snd section) )
-            else section
+        toggleSelectedSectionStatus selectedSectionId ( sectionId, status ) =
+          ( sectionId, if selectedSectionId == sectionId then toggleStatus status else status )
 
         updatedModel =
-          List.map (toggleSelectedSectionStatus section) model
+          List.map (toggleSelectedSectionStatus sectionId) model
 
       in
         ( updatedModel, Persistence.saveModel updatedModel )

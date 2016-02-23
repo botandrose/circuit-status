@@ -40,8 +40,8 @@ modelEncoder model =
         Open -> True
         Closed -> False
 
-    encodeSection section =
-      ( toString (fst section), JE.bool (statusToBool (snd section) ) )
+    encodeSection ( sectionId, status ) =
+      ( toString sectionId, JE.bool (statusToBool status) )
 
   in
     JE.object <| List.map encodeSection model
@@ -59,9 +59,9 @@ modelDecoder =
     statusDecoder =
       JD.bool `JD.andThen` (\bool -> JD.succeed (boolToStatus bool))
 
-    convertKeysToSections : List ( String, Status) -> JD.Decoder Model
+    convertKeysToSections : List ( String, Status ) -> JD.Decoder Model
     convertKeysToSections almostModel =
-      JD.succeed (List.map (\section -> ( stringToSectionId (fst section), snd section )) almostModel)
+      JD.succeed (List.map (\( sectionId, status ) -> ( stringToSectionId sectionId, status )) almostModel)
 
   in
     (JD.keyValuePairs statusDecoder) `JD.andThen` convertKeysToSections

@@ -108,12 +108,12 @@ sectionPoints sectionId =
 
 
 sectionView : Signal.Address Action -> Section -> Svg
-sectionView address section =
+sectionView address ( sectionId, status ) =
   polygon
-    [ onClick address (Toggle section)
-    , fill (statusToColor (snd section))
+    [ onClick address (Toggle sectionId)
+    , fill (statusToColor status)
     , stroke "none"
-    , points (sectionPoints (fst section))
+    , points (sectionPoints sectionId)
     ]
     []
 

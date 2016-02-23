@@ -3,7 +3,7 @@ module Model (..) where
 import Dict
 
 
-type Action = Noop | FromServer (Dict.Dict String Model) | Toggle Section
+type Action = Noop | FromServer (Dict.Dict String Model) | Toggle SectionId
 
 
 type Status = Open | Closed
