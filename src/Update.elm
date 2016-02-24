@@ -1,6 +1,5 @@
 module Update (update) where
 
-import Dict
 import Effects exposing (Effects, Never)
 import Model exposing (..)
 import Persistence exposing (saveModel)
@@ -12,8 +11,8 @@ update action model =
     Noop ->
       ( model, Effects.none )
 
-    FromServer dict ->
-      ( Maybe.withDefault initialModel (Dict.get "sections" dict), Effects.none )
+    FromServer model ->
+      ( model, Effects.none )
 
     Toggle sectionId ->
       let

@@ -1,5 +1,6 @@
 module Persistence (initialEffect, inputItems, saveModel) where
 
+import Dict
 import Effects exposing (Effects, Never)
 import ElmFire
 import ElmFire.Dict
@@ -92,9 +93,22 @@ kickOff =
 
 -- Mirror Firebase's content as the model's items
 -- initialTask : Task Error (Task Error ())
--- inputItems : Signal ???
-(initialTask, inputItems) =
+-- dictSignal : Signal (Dict String v)
+(initialTask, firebaseDictSignal) =
   ElmFire.Dict.mirror syncConfig
+
+
+inputItems : Signal Model
+inputItems =
+  let
+    logFailure =
+      Debug.log "no 'sections' key from firebase" initialModel
+
+    extractModel dict =
+      Maybe.withDefault logFailure (Dict.get "sections" dict)
+
+  in
+    Signal.map extractModel firebaseDictSignal
 
 
 initialEffect : Effects Action

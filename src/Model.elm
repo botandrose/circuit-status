@@ -1,9 +1,7 @@
 module Model (..) where
 
-import Dict
 
-
-type Action = Noop | FromServer (Dict.Dict String Model) | Toggle SectionId
+type Action = Noop | FromServer Model | Toggle SectionId
 
 
 type Status = Open | Closed
