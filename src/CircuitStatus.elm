@@ -1,8 +1,7 @@
 import Effects exposing (Never)
 import Html exposing (Html)
 import Model exposing (..)
-import Persistence exposing (initialEffect, inputItems)
-import Signal exposing (Mailbox, Address, mailbox, message)
+import Persistence exposing (initialEffect, modelUpdates)
 import StartApp
 import Task exposing (Task)
 import Update exposing (update)
@@ -14,7 +13,7 @@ config =
   { init = ( initialModel, initialEffect )
   , update = update
   , view = view
-  , inputs = [ Signal.map FromServer inputItems ]
+  , inputs = [ Signal.map Model.FromServer modelUpdates ]
   }
 
 

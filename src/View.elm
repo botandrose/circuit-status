@@ -1,9 +1,9 @@
 module View (view) where
 
-import Html exposing (..)
-import Html.Events exposing (..)
+import Html exposing (Html)
+import Html.Events exposing (onClick)
 import Model exposing (..)
-import String exposing (split)
+import String
 import Svg exposing (..)
 import Svg.Attributes exposing (..)
 

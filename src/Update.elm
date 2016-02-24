@@ -1,6 +1,6 @@
 module Update (update) where
 
-import Effects exposing (Effects, Never)
+import Effects exposing (Effects)
 import Model exposing (..)
 import Persistence exposing (saveModel)
 
