@@ -105,11 +105,11 @@ kickOff =
 modelUpdates : Signal Model
 modelUpdates =
   let
-    logFailure =
-      Debug.log "no 'sections' key from firebase" initialModel
+    logFailure dict =
+      Debug.log ("no 'sections' key from firebase " ++ toString dict ++ ", defaulting to") initialModel
 
     extractModel dict =
-      Maybe.withDefault logFailure <| Dict.get "sections" dict
+      Maybe.withDefault (logFailure dict) <| Dict.get "sections" dict
 
   in
     Signal.map extractModel firebaseDictUpdates
