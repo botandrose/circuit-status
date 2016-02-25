@@ -17,21 +17,20 @@ firebaseUrl = "https://shining-inferno-6056.firebaseio.com"
 
 stringToSectionId : String -> SectionId
 stringToSectionId string =
-  case string of
-    "CaveLeft" -> CaveLeft
-    "CaveRight" -> CaveRight
-    "BoneBreaker" -> BoneBreaker
-    "AlleyCave" -> AlleyCave
-    "AlleyNorthwest" -> AlleyNorthwest
-    "AlleyNortheast" -> AlleyNortheast
-    "Entrance" -> Entrance
-    "Overhang" -> Overhang
-    "Staircase" -> Staircase
-    _ -> Debug.log ("unmatched sectionId string: \"" ++ string ++ "\", defaulting to") CaveLeft
+  let
+    detectSectionId memo sectionId =
+      if toString sectionId == string
+        then sectionId
+        else memo
 
+    sectionId =
+      List.foldr detectSectionId CaveLeft sectionIds
 
-sectionIdToString : SectionId -> String
-sectionIdToString = toString
+  in
+    if toString sectionId == string
+      then sectionId
+      else Debug.log ("unmatched sectionId string: \"" ++ string ++ "\", defaulting to") sectionId
+
 
 modelEncoder : Model -> JE.Value
 modelEncoder model =
