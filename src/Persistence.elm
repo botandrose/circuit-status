@@ -42,7 +42,7 @@ modelEncoder model =
         Closed -> False
 
     encodeSection ( sectionId, status ) =
-      ( toString sectionId, JE.bool (statusToBool status) )
+      ( toString sectionId, JE.bool <| statusToBool status )
 
   in
     JE.object <| List.map encodeSection model
@@ -58,14 +58,18 @@ modelDecoder =
 
     statusDecoder : JD.Decoder Status
     statusDecoder =
-      JD.bool `JD.andThen` (\bool -> JD.succeed (boolToStatus bool))
+      JD.bool `JD.andThen` \bool -> JD.succeed <| boolToStatus bool
 
     convertKeysToSections : List ( String, Status ) -> JD.Decoder Model
-    convertKeysToSections almostModel =
-      JD.succeed (List.map (\( sectionId, status ) -> ( stringToSectionId sectionId, status )) almostModel)
+    convertKeysToSections =
+      let
+        firstToSectionId ( sectionId, status ) =
+          ( stringToSectionId sectionId, status )
+      in
+        JD.succeed << List.map firstToSectionId
 
   in
-    (JD.keyValuePairs statusDecoder) `JD.andThen` convertKeysToSections
+    JD.keyValuePairs statusDecoder `JD.andThen` convertKeysToSections
 
 
 syncConfig : ElmFire.Dict.Config Model
@@ -88,13 +92,13 @@ effectModel operation =
 -- Map any task to an effect, discarding any direct result or error value
 kickOff : Task x a -> Effects Action
 kickOff =
-  Task.toMaybe >> Task.map (always (Noop)) >> Effects.task
+  Task.toMaybe >> Task.map (always Noop) >> Effects.task
 
 
 -- Mirror Firebase's content as the model's items
 -- initialTask : Task Error (Task Error ())
 -- dictSignal : Signal (Dict String v)
-(initialTask, firebaseDictUpdates) =
+( initialTask, firebaseDictUpdates ) =
   ElmFire.Dict.mirror syncConfig
 
 
@@ -105,7 +109,7 @@ modelUpdates =
       Debug.log "no 'sections' key from firebase" initialModel
 
     extractModel dict =
-      Maybe.withDefault logFailure (Dict.get "sections" dict)
+      Maybe.withDefault logFailure <| Dict.get "sections" dict
 
   in
     Signal.map extractModel firebaseDictUpdates
