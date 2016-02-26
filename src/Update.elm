@@ -3,10 +3,11 @@ module Update (update) where
 import Effects exposing (Effects)
 import Model exposing (..)
 import Persistence exposing (saveSections)
+import Time exposing (Time)
 
 
-update : Action -> Model -> ( Model, Effects Action )
-update action model =
+update : Action -> Time -> Model -> ( Model, Effects Action )
+update action currentTime model =
   case action of
     Noop ->
       ( model, Effects.none )
@@ -25,7 +26,9 @@ update action model =
             Closed -> Open
 
         toggleSelectedSectionStatus selectedSectionId section =
-          { section | status = if selectedSectionId == section.sectionId then toggleStatus section.status else section.status }
+          if selectedSectionId == section.sectionId
+            then { section | status = toggleStatus section.status, updatedAt = currentTime }
+            else section
 
         updatedSections =
           List.map (toggleSelectedSectionStatus sectionId) model.sections

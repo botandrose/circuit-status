@@ -1,5 +1,7 @@
 module Model (..) where
 
+import Time exposing (Time)
+
 
 type Action = Noop | FromServer (List Section) | ToggleSection SectionId | ToggleIsEditing
 
@@ -15,7 +17,7 @@ sectionIds =
   [ CaveLeft, CaveRight, BoneBreaker, AlleyCave, AlleyNorthwest, AlleyNortheast, Entrance, Overhang, Staircase ]
 
 
-type alias Section = { sectionId : SectionId, status : Status }
+type alias Section = { sectionId : SectionId, status : Status, updatedAt : Time }
 
 
 type alias Model = { sections : List Section, isEditing : Bool }

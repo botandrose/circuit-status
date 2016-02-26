@@ -40,10 +40,11 @@ sectionsEncoder sections =
         Open -> True
         Closed -> False
 
-    encodeSection { sectionId, status } =
+    encodeSection { sectionId, status, updatedAt } =
       JE.object
         [ ( "sectionId", JE.string <| toString sectionId )
         , ( "status", JE.bool <| statusToBool status )
+        , ( "updatedAt", JE.float <| updatedAt )
         ]
 
   in
@@ -68,9 +69,10 @@ sectionsDecoder =
 
   in
     JD.list
-      <| JD.object2 Section
+      <| JD.object3 Section
         ("sectionId" := convertKeysToSections)
         ("status" := statusDecoder)
+        ("updatedAt" := JD.float)
 
 
 syncConfig : ElmFire.Dict.Config (List Section)

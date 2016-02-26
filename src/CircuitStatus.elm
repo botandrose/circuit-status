@@ -2,13 +2,13 @@ import Effects exposing (Never)
 import Html exposing (Html)
 import Model exposing (..)
 import Persistence exposing (initialEffect, sectionsUpdates)
-import StartApp
+import TimeApp
 import Task exposing (Task)
 import Update exposing (update)
 import View exposing (view)
 
 
-config : StartApp.Config Model Action
+config : TimeApp.Config Model Action
 config =
   { init = ( initialModel, initialEffect )
   , update = update
@@ -17,8 +17,8 @@ config =
   }
 
 
-app : StartApp.App Model
-app = StartApp.start config
+app : TimeApp.App Model
+app = TimeApp.start config
 
 
 port runEffects : Signal (Task Never ())
