@@ -2,7 +2,7 @@ module Update (update) where
 
 import Effects exposing (Effects)
 import Model exposing (..)
-import Persistence exposing (saveModel)
+import Persistence exposing (saveSections)
 
 
 update : Action -> Model -> ( Model, Effects Action )
@@ -11,10 +11,13 @@ update action model =
     Noop ->
       ( model, Effects.none )
 
-    FromServer model ->
-      ( model, Effects.none )
+    FromServer sections ->
+      ( { model | sections = sections }, Effects.none )
 
-    Toggle sectionId ->
+    ToggleIsEditing ->
+      ( { model | isEditing = not model.isEditing }, Effects.none )
+
+    ToggleSection sectionId ->
       let
         toggleStatus status =
           case status of
@@ -24,9 +27,12 @@ update action model =
         toggleSelectedSectionStatus selectedSectionId ( sectionId, status ) =
           ( sectionId, if selectedSectionId == sectionId then toggleStatus status else status )
 
+        updatedSections =
+          List.map (toggleSelectedSectionStatus sectionId) model.sections
+
         updatedModel =
-          Model <| List.map (toggleSelectedSectionStatus sectionId) model.sections
+          { model | sections = updatedSections }
 
       in
-        ( updatedModel, Persistence.saveModel updatedModel )
+        ( updatedModel, Persistence.saveSections updatedModel.sections )
 

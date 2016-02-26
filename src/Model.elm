@@ -1,7 +1,7 @@
 module Model (..) where
 
 
-type Action = Noop | FromServer Model | Toggle SectionId
+type Action = Noop | FromServer (List Section) | ToggleSection SectionId | ToggleIsEditing
 
 
 type Status = Open | Closed
@@ -18,7 +18,7 @@ sectionIds =
 type alias Section = ( SectionId, Status )
 
 
-type alias Model = { sections : List Section }
+type alias Model = { sections : List Section, isEditing : Bool }
 
 
 initialModel : Model
@@ -32,4 +32,5 @@ initialModel =
     , ( AlleyNortheast, Open )
     , ( Entrance, Open )
     ]
+  False
 

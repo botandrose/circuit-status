@@ -1,7 +1,7 @@
 import Effects exposing (Never)
 import Html exposing (Html)
 import Model exposing (..)
-import Persistence exposing (initialEffect, modelUpdates)
+import Persistence exposing (initialEffect, sectionsUpdates)
 import StartApp
 import Task exposing (Task)
 import Update exposing (update)
@@ -13,7 +13,7 @@ config =
   { init = ( initialModel, initialEffect )
   , update = update
   , view = view
-  , inputs = [ Signal.map Model.FromServer modelUpdates ]
+  , inputs = [ Signal.map Model.FromServer sectionsUpdates ]
   }
 
 

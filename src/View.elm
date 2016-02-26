@@ -25,8 +25,21 @@ view address model =
         ]
       , g
         []
-        (List.map (sectionView address) model.sections)
+        (List.map (sectionView address model.isEditing) model.sections)
+      , editButton address model.isEditing
       ]
+
+
+editButton : Signal.Address Action -> Bool -> Svg
+editButton address isEditing =
+  circle
+    [ fill (if isEditing then "blue" else "grey")
+    , onClick address ToggleIsEditing
+    , cx "500"
+    , cy "60"
+    , r "40"
+    ]
+    []
 
 
 confidenceBoulder : Svg
@@ -99,10 +112,10 @@ sectionPoints sectionId =
     Staircase -> "575.332,373.477 556.083,320.798 573.305,269.386 621.57,307.061 599.469,373.118"
 
 
-sectionView : Signal.Address Action -> Section -> Svg
-sectionView address ( sectionId, status ) =
+sectionView : Signal.Address Action -> Bool -> Section -> Svg
+sectionView address isEditing ( sectionId, status ) =
   polygon
-    [ onClick address (Toggle sectionId)
+    [ onClick address (if isEditing then ToggleSection sectionId else Noop)
     , fill (statusToColor status)
     , stroke "none"
     , points (sectionPoints sectionId)

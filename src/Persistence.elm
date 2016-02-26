@@ -1,4 +1,4 @@
-module Persistence (initialEffect, modelUpdates, saveModel) where
+module Persistence (initialEffect, sectionsUpdates, saveSections) where
 
 import Dict
 import Effects exposing (Effects, Never)
@@ -32,8 +32,8 @@ stringToSectionId string =
       else Debug.log ("unmatched sectionId string: \"" ++ string ++ "\", defaulting to") sectionId
 
 
-modelEncoder : Model -> JE.Value
-modelEncoder model =
+sectionsEncoder : (List Section) -> JE.Value
+sectionsEncoder sections =
   let
     statusToBool status =
       case status of
@@ -44,11 +44,11 @@ modelEncoder model =
       ( toString sectionId, JE.bool <| statusToBool status )
 
   in
-    JE.object <| List.map encodeSection model.sections
+    JE.object <| List.map encodeSection sections
 
 
-modelDecoder : JD.Decoder Model
-modelDecoder =
+sectionsDecoder : JD.Decoder (List Section)
+sectionsDecoder =
   let
     boolToStatus bool =
       case bool of
@@ -59,29 +59,29 @@ modelDecoder =
     statusDecoder =
       JD.bool `JD.andThen` \bool -> JD.succeed <| boolToStatus bool
 
-    convertKeysToSections : List ( String, Status ) -> JD.Decoder Model
+    convertKeysToSections : List ( String, Status ) -> JD.Decoder (List Section)
     convertKeysToSections =
       let
         firstToSectionId ( sectionId, status ) =
           ( stringToSectionId sectionId, status )
       in
-        JD.succeed << Model << List.map firstToSectionId
+        JD.succeed << List.map firstToSectionId
 
   in
     JD.keyValuePairs statusDecoder `JD.andThen` convertKeysToSections
 
 
-syncConfig : ElmFire.Dict.Config Model
+syncConfig : ElmFire.Dict.Config (List Section)
 syncConfig =
   { location = ElmFire.fromUrl firebaseUrl
   , orderOptions = ElmFire.noOrder
-  , encoder = modelEncoder
-  , decoder = modelDecoder
+  , encoder = sectionsEncoder
+  , decoder = sectionsDecoder
   }
 
 
-effectModel : ElmFire.Op.Operation Model -> Effects Action
-effectModel operation =
+effectSections : ElmFire.Op.Operation (List Section) -> Effects Action
+effectSections operation =
   ElmFire.Op.operate
     syncConfig
     operation
@@ -94,31 +94,31 @@ kickOff =
   Task.toMaybe >> Task.map (always Noop) >> Effects.task
 
 
--- Mirror Firebase's content as the model's items
+-- Mirror Firebase's content as the sections's items
 -- initialTask : Task Error (Task Error ())
 -- dictSignal : Signal (Dict String v)
 ( initialTask, firebaseDictUpdates ) =
   ElmFire.Dict.mirror syncConfig
 
 
-modelUpdates : Signal Model
-modelUpdates =
+sectionsUpdates : Signal (List Section)
+sectionsUpdates =
   let
     logFailure dict =
-      Debug.log ("no 'sections' key from firebase " ++ toString dict ++ ", defaulting to") initialModel
+      Debug.log ("no 'sections' key from firebase " ++ toString dict ++ ", defaulting to") initialModel.sections
 
-    extractModel dict =
+    extractSections dict =
       Maybe.withDefault (logFailure dict) <| Dict.get "sections" dict
 
   in
-    Signal.map extractModel firebaseDictUpdates
+    Signal.map extractSections firebaseDictUpdates
 
 
 initialEffect : Effects Action
 initialEffect = initialTask |> kickOff
 
 
-saveModel : Model -> Effects Action
-saveModel model =
-  effectModel <| ElmFire.Op.insert "sections" model
+saveSections : List Section -> Effects Action
+saveSections sections =
+  effectSections <| ElmFire.Op.insert "sections" sections
 
