@@ -18,18 +18,18 @@ sectionIds =
 type alias Section = ( SectionId, Status )
 
 
-type alias Model = List Section
+type alias Model = { sections : List Section }
 
 
 initialModel : Model
 initialModel =
-  [ ( CaveLeft, Open )
-  , ( CaveRight, Open )
-  , ( BoneBreaker, Open )
-  , ( AlleyCave, Open )
-  , ( AlleyNorthwest, Open )
-  , ( AlleyNortheast, Open )
-  , ( Entrance, Open )
-  ]
-
+  Model
+    [ ( CaveLeft, Open )
+    , ( CaveRight, Open )
+    , ( BoneBreaker, Open )
+    , ( AlleyCave, Open )
+    , ( AlleyNorthwest, Open )
+    , ( AlleyNortheast, Open )
+    , ( Entrance, Open )
+    ]
 

@@ -44,7 +44,7 @@ modelEncoder model =
       ( toString sectionId, JE.bool <| statusToBool status )
 
   in
-    JE.object <| List.map encodeSection model
+    JE.object <| List.map encodeSection model.sections
 
 
 modelDecoder : JD.Decoder Model
@@ -65,7 +65,7 @@ modelDecoder =
         firstToSectionId ( sectionId, status ) =
           ( stringToSectionId sectionId, status )
       in
-        JD.succeed << List.map firstToSectionId
+        JD.succeed << Model << List.map firstToSectionId
 
   in
     JD.keyValuePairs statusDecoder `JD.andThen` convertKeysToSections

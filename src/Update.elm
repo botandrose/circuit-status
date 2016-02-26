@@ -25,7 +25,7 @@ update action model =
           ( sectionId, if selectedSectionId == sectionId then toggleStatus status else status )
 
         updatedModel =
-          List.map (toggleSelectedSectionStatus sectionId) model
+          Model <| List.map (toggleSelectedSectionStatus sectionId) model.sections
 
       in
         ( updatedModel, Persistence.saveModel updatedModel )

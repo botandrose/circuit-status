@@ -25,7 +25,7 @@ view address model =
         ]
       , g
         []
-        (List.map (sectionView address) model)
+        (List.map (sectionView address) model.sections)
       ]
 
 
