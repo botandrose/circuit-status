@@ -15,7 +15,7 @@ sectionIds =
   [ CaveLeft, CaveRight, BoneBreaker, AlleyCave, AlleyNorthwest, AlleyNortheast, Entrance, Overhang, Staircase ]
 
 
-type alias Section = ( SectionId, Status )
+type alias Section = { sectionId : SectionId, status : Status }
 
 
 type alias Model = { sections : List Section, isEditing : Bool }
@@ -23,14 +23,5 @@ type alias Model = { sections : List Section, isEditing : Bool }
 
 initialModel : Model
 initialModel =
-  Model
-    [ ( CaveLeft, Open )
-    , ( CaveRight, Open )
-    , ( BoneBreaker, Open )
-    , ( AlleyCave, Open )
-    , ( AlleyNorthwest, Open )
-    , ( AlleyNortheast, Open )
-    , ( Entrance, Open )
-    ]
-  False
+  Model [] False
 

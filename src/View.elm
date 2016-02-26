@@ -113,7 +113,7 @@ sectionPoints sectionId =
 
 
 sectionView : Signal.Address Action -> Bool -> Section -> Svg
-sectionView address isEditing ( sectionId, status ) =
+sectionView address isEditing { sectionId, status } =
   polygon
     [ onClick address (if isEditing then ToggleSection sectionId else Noop)
     , fill (statusToColor status)

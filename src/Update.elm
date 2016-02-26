@@ -24,8 +24,8 @@ update action model =
             Open -> Closed
             Closed -> Open
 
-        toggleSelectedSectionStatus selectedSectionId ( sectionId, status ) =
-          ( sectionId, if selectedSectionId == sectionId then toggleStatus status else status )
+        toggleSelectedSectionStatus selectedSectionId section =
+          { section | status = if selectedSectionId == section.sectionId then toggleStatus section.status else section.status }
 
         updatedSections =
           List.map (toggleSelectedSectionStatus sectionId) model.sections

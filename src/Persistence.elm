@@ -5,7 +5,7 @@ import Effects exposing (Effects, Never)
 import ElmFire
 import ElmFire.Dict
 import ElmFire.Op
-import Json.Decode as JD
+import Json.Decode as JD exposing ((:=))
 import Json.Encode as JE
 import Model exposing (..)
 import Task exposing (Task)
@@ -40,11 +40,14 @@ sectionsEncoder sections =
         Open -> True
         Closed -> False
 
-    encodeSection ( sectionId, status ) =
-      ( toString sectionId, JE.bool <| statusToBool status )
+    encodeSection { sectionId, status } =
+      JE.object
+        [ ( "sectionId", JE.string <| toString sectionId )
+        , ( "status", JE.bool <| statusToBool status )
+        ]
 
   in
-    JE.object <| List.map encodeSection sections
+    JE.list <| List.map encodeSection sections
 
 
 sectionsDecoder : JD.Decoder (List Section)
@@ -59,16 +62,15 @@ sectionsDecoder =
     statusDecoder =
       JD.bool `JD.andThen` \bool -> JD.succeed <| boolToStatus bool
 
-    convertKeysToSections : List ( String, Status ) -> JD.Decoder (List Section)
+    convertKeysToSections : JD.Decoder SectionId
     convertKeysToSections =
-      let
-        firstToSectionId ( sectionId, status ) =
-          ( stringToSectionId sectionId, status )
-      in
-        JD.succeed << List.map firstToSectionId
+      JD.string `JD.andThen` \string -> JD.succeed <| stringToSectionId string
 
   in
-    JD.keyValuePairs statusDecoder `JD.andThen` convertKeysToSections
+    JD.list
+      <| JD.object2 Section
+        ("sectionId" := convertKeysToSections)
+        ("status" := statusDecoder)
 
 
 syncConfig : ElmFire.Dict.Config (List Section)
