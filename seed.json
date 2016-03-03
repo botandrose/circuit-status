@@ -1,0 +1,11 @@
+{ "sections": [
+  { "sectionId": "CaveLeft", "status": true, "updatedAt": 0 },
+  { "sectionId": "CaveRight", "status": true, "updatedAt": 0 },
+  { "sectionId": "BoneBreaker", "status": true, "updatedAt": 0 },
+  { "sectionId": "AlleyCave", "status": true, "updatedAt": 0 },
+  { "sectionId": "AlleyNorthwest", "status": true, "updatedAt": 0 },
+  { "sectionId": "AlleyNortheast", "status": true, "updatedAt": 0 },
+  { "sectionId": "Entrance", "status": true, "updatedAt": 0 },
+  { "sectionId": "Overhang", "status": true, "updatedAt": 0 },
+  { "sectionId": "Staircas", "status": true, "updatedAt": 0 }
+]}
