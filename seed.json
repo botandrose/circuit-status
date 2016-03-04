@@ -7,5 +7,28 @@
   { "sectionId": "AlleyNortheast", "status": true, "updatedAt": 0 },
   { "sectionId": "Entrance", "status": true, "updatedAt": 0 },
   { "sectionId": "Overhang", "status": true, "updatedAt": 0 },
-  { "sectionId": "Staircas", "status": true, "updatedAt": 0 }
+  { "sectionId": "Staircase", "status": true, "updatedAt": 0 },
+
+  { "sectionId": "Bottom6", "status": true, "updatedAt": 0 },
+  { "sectionId": "Bottom5", "status": true, "updatedAt": 0 },
+  { "sectionId": "Bottom4", "status": true, "updatedAt": 0 },
+  { "sectionId": "Bottom3", "status": true, "updatedAt": 0 },
+  { "sectionId": "Bottom2", "status": true, "updatedAt": 0 },
+  { "sectionId": "Bottom1", "status": true, "updatedAt": 0 },
+
+  { "sectionId": "Right9", "status": true, "updatedAt": 0 },
+  { "sectionId": "Right8", "status": true, "updatedAt": 0 },
+  { "sectionId": "Right7", "status": true, "updatedAt": 0 },
+  { "sectionId": "Right6", "status": true, "updatedAt": 0 },
+  { "sectionId": "Right5", "status": true, "updatedAt": 0 },
+  { "sectionId": "Right4", "status": true, "updatedAt": 0 },
+  { "sectionId": "Right3", "status": true, "updatedAt": 0 },
+  { "sectionId": "Right2", "status": true, "updatedAt": 0 },
+  { "sectionId": "Right1", "status": true, "updatedAt": 0 },
+
+  { "sectionId": "Top5", "status": true, "updatedAt": 0 },
+  { "sectionId": "Top4", "status": true, "updatedAt": 0 },
+  { "sectionId": "Top3", "status": true, "updatedAt": 0 },
+  { "sectionId": "Top2", "status": true, "updatedAt": 0 },
+  { "sectionId": "Top1", "status": true, "updatedAt": 0 }
 ]}
