@@ -10,36 +10,41 @@ import Svg.Attributes exposing (..)
 
 view : Signal.Address Action -> Model -> Html
 view address model =
-    Svg.svg
-      [ version "1.1"
-      , Svg.Attributes.width "100%"
-      , Svg.Attributes.height "100%"
-      , viewBox "0 0 1000 680"
-      ]
-      [ g
-        []
-        [ confidenceBoulder
-        , bigTopoutBoulder
-        , smallTopoutBoulder
-        , wallBoulder
-        ]
-      , g
-        []
-        (List.map (sectionView address model.isEditing) model.sections)
-      , editButton address model.isEditing
-      ]
-
-
-editButton : Signal.Address Action -> Bool -> Svg
-editButton address isEditing =
-  circle
-    [ fill (if isEditing then "blue" else "grey")
-    , onClick address ToggleIsEditing
-    , cx "500"
-    , cy "60"
-    , r "40"
+  svg
+    [ version "1.1"
+    , width "100%"
+    , height "100%"
+    , viewBox "0 0 1000 680"
     ]
-    []
+
+    [ g
+      []
+      [ confidenceBoulder
+      , bigTopoutBoulder
+      , smallTopoutBoulder
+      , wallBoulder
+      ]
+
+    , g
+      []
+      <| each model.sections <| \{ sectionId, status } ->
+        polygon
+          [ onClick address <| if model.isEditing then ToggleSection sectionId else Noop
+          , fill <| statusToColor status
+          , stroke "none"
+          , points <| sectionPoints sectionId
+          ]
+          []
+
+    , circle
+      [ fill (if model.isEditing then "blue" else "grey")
+      , onClick address ToggleIsEditing
+      , cx "500"
+      , cy "60"
+      , r "40"
+      ]
+      []
+    ]
 
 
 confidenceBoulder : Svg
@@ -135,17 +140,6 @@ sectionPoints sectionId =
     Top1 -> "340.062,187.226 308.294,179.453 232.25,193.213 209.841,182.802 200.683,135.264 219.437,135.265 233.257,184.747 312.332,168.846"
 
 
-sectionView : Signal.Address Action -> Bool -> Section -> Svg
-sectionView address isEditing { sectionId, status } =
-  polygon
-    [ onClick address (if isEditing then ToggleSection sectionId else Noop)
-    , fill (statusToColor status)
-    , stroke "none"
-    , points (sectionPoints sectionId)
-    ]
-    []
-
-
 outline : String -> Svg
 outline points' =
   polygon
@@ -210,4 +204,7 @@ statusToColor status =
     Open -> "green"
     Closed -> "red"
 
+
+each : List a -> (a -> Html) -> List Html
+each = flip List.map
 
