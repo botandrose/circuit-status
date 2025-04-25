@@ -1,25 +1,24 @@
 import Effects exposing (Never)
 import Html exposing (Html)
 import Model exposing (..)
-import Persistence exposing (initialEffect, inputItems)
-import Signal exposing (Mailbox, Address, mailbox, message)
-import StartApp
+import Persistence exposing (initialEffect, sectionsUpdates)
+import TimeApp
 import Task exposing (Task)
 import Update exposing (update)
 import View exposing (view)
 
 
-config : StartApp.Config Model Action
+config : TimeApp.Config Model Action
 config =
   { init = ( initialModel, initialEffect )
   , update = update
   , view = view
-  , inputs = [ Signal.map FromServer inputItems ]
+  , inputs = [ Signal.map Model.FromServer sectionsUpdates ]
   }
 
 
-app : StartApp.App Model
-app = StartApp.start config
+app : TimeApp.App Model
+app = TimeApp.start config
 
 
 port runEffects : Signal (Task Never ())

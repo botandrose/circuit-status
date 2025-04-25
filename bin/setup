@@ -1,0 +1,3 @@
+#!/bin/bash
+npm install
+bin/elm-package install -y
